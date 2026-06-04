@@ -1,0 +1,79 @@
+[package]
+name = "fsrs-cli"
+version = "0.1.0"
+edition = "2021"
+description = "A CLI memory management tool using FSRS spaced repetition algorithm"
+license = "MIT"
+
+[[bin]]
+name = "fsrs-cli"
+path = "src/main.rs"
+
+[lib]
+name = "fsrs_lib"
+path = "src/lib.rs"
+
+[dependencies]
+# CLI
+clap = { version = "4", features = ["derive"] }
+dialoguer = "0.11"
+console = "0.15"
+ansi_term = "0.12"
+
+# Error handling
+anyhow = "1"
+thiserror = "1"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# FSRS scheduling
+rs-fsrs = "1.2"
+
+# Storage
+rusqlite = { version = "0.31", features = ["bundled"] }
+
+# Search
+tantivy = "0.26"
+tantivy-jieba = "0.20"
+
+# Markdown parsing
+pulldown-cmark = "0.11"
+
+# Chinese NLP
+jieba-rs = { version = "0.8", features = ["tfidf"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yml = "0.0.12"
+toml = "0.8"
+
+# Utilities
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+sha2 = "0.10"
+hex = "0.4"
+walkdir = "2"
+
+# AI (optional)
+tokio = { version = "1", optional = true, features = ["rt-multi-thread", "macros"] }
+reqwest = { version = "0.12", optional = true, features = ["json"] }
+async-openai = { version = "0.40", optional = true, default-features = false, features = ["chat-completion"] }
+
+# PDF (optional, requires ai)
+unpdf = { version = "0.4", optional = true }
+chunkedrs = { version = "1", optional = true }
+
+[features]
+default = []
+ai = ["dep:tokio", "dep:reqwest", "dep:async-openai"]
+pdf = ["ai", "dep:unpdf", "dep:chunkedrs"]
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+opt-level = "z"
+
